@@ -22,6 +22,22 @@ router.post('/createAccount',async(request, response) => {
             //Generate passcode
             const passcode = randomInteger(1000,9999);
 
+            //FORGET PASSWORD
+            router.post('/forgetPassword', async(request,response) => {
+                //get user email
+                const email = request.body.email
+                // is user existing
+                User.findOne({email:email})
+                .then(async account =>{
+                    if(account){
+                        const passcode = randomInteger(1000,9999);
+                        account.passcode = passcode;
+                        account.save();
+                        //.then(account_update =>{})
+                    }
+                })
+            })
+
             //Create user in MongoDB
             const _user = new User({
                 _id: mongoose.Types.ObjectId(),
