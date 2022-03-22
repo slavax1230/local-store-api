@@ -6,7 +6,9 @@ const router = express.Router();
 //MODELS
 const User = require('../models/user');
 
-router.post('/createAccount',async(request, response) => {
+
+//create account
+router.post('/createAccount', async(request, response) => {
     //Get user Input
     const {firstName, lastName, email, password, mobile} = request.body;
     //Check if user exists
@@ -64,6 +66,27 @@ router.post('/createAccount',async(request, response) => {
     
 })
 
+// Login 
+router.post('/login', async (request, response) => {
+    // Get user credential
+    // is user exist
+    // is Verified ? is Locked?
+    // compare  passwords 
+    // create Token 
+    // response 
+
+})
+
+//Verify Passcode
+router.post('/verify', async (request, response) => {
+    // get passcode and email
+    const {email, passcode} = request.body; 
+    // is user exist
+    User.findOne({email: email}) 
+    // verify code 
+    // update isApproved
+    // response 
+})
 
 const randomInteger = (min,max) =>{
     return Math.floor(Math.random() * (max - min + 1)) + min;
