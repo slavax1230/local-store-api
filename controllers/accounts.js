@@ -69,7 +69,40 @@ router.post('/createAccount', async(request, response) => {
 // Login 
 router.post('/login', async (request, response) => {
     // Get user credential
-    // is user exist
+    const {email,password} = request.body;
+    // search for user 
+    User.findOne({email: email})
+    .then(async account => {
+        if (account) {// if account exist 
+            if (account.isApproved && !account.isLocked){
+                // compare passwords
+                const isMatch = await bcryptjs.compare(password,account.password);
+                if (isMatch){
+                    
+                } else {
+                    return response.status(403).json({
+                        message: "account locked"
+                    })
+                }
+            }else{
+                return response.status(403).json({
+                    message: "account locked"
+                })
+            }
+            
+        } else {
+            // if user not exist
+            return response.status(200).json({
+                message: "password not correct"
+            })
+        }
+    })//user exist
+    
+    // user not founded
+    .catch(err = {
+        message: "email not found"
+    })
+    
     // is Verified ? is Locked?
     // compare  passwords 
     // create Token 
@@ -92,7 +125,7 @@ router.post('/verify', async (request, response) => {
                 account.save()
                 .then(updated_account => {
                         // response 
-                    return response.statusCode(200).json({
+                    return response.status(200).json({
                         message:updated_account
                     })
                 })
