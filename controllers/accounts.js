@@ -2,6 +2,7 @@ const bcryptjs = require('bcryptjs');
 const express = require('express');
 const mongoose = require('mongoose');
 const router = express.Router();
+const jwt = require('jsonwebtoken');
 
 //MODELS
 const User = require('../models/user');
@@ -78,7 +79,21 @@ router.post('/login', async (request, response) => {
                 // compare passwords
                 const isMatch = await bcryptjs.compare(password,account.password);
                 if (isMatch){
-                    
+                    // CREATE Token
+                    const acc_data = {
+                        FirstName: account.firstName,
+                        avatar: account.avatar,
+                        lastName: account.lastName,
+                        mobile: account.mobile,
+                        email:account.email,
+                        _id: account._id
+                    };
+                    const token = await jwt.sign(acc_data, 'Ep6k4sVu1DUM1gtH5BzJpdQqtqFip2EU');
+                    // RESPONSE 
+                    return response.status(200).json({
+                        token: token
+
+                    })
                 } else {
                     return response.status(403).json({
                         message: "account locked"
