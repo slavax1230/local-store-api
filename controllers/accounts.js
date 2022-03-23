@@ -92,7 +92,6 @@ router.post('/login', async (request, response) => {
                     // RESPONSE 
                     return response.status(200).json({
                         token: token
-
                     })
                 } else {
                     return response.status(403).json({
@@ -160,6 +159,62 @@ router.post('/verify', async (request, response) => {
         });
     })
 });
+
+router.post('/forgetPassword', async (request,response) =>{
+    // get user email
+    const email = request.body.email;
+    // if exist
+    User.findOne({email:email})
+    .then(async account =>{
+        if(account){
+            // user exist
+          const passcode = randomInteger(1000,9999);
+          account.passcode = passcode;
+          account.save()
+          .then(updated_account =>{
+            return response.status(200).json({
+                message:" new pass code :" + updated_account.passcode
+            });
+          }) 
+        } else {
+            // user not exist
+            return response.status(200).json({
+                message: "user not exist"
+            })
+        }
+    })
+    .catch(err => {
+        return response.status(200).json({
+            message:err
+        })
+    })
+})
+
+router.post('/updateNewPassword',async (request,response) => {
+    const {email,newpassword} = request.body;
+    User.findOne({email:email})
+    .then(async account =>{
+        if (account){
+            const formatted_password = await bcryptjs.hash(newpassword,10);
+            account.password = formatted_password;
+            account.save()
+            .then(updated_acccount =>{
+                return response.status(200).json({
+                    message: updated_acccount
+                });
+            })
+        } else {
+            return response.status(200).json({
+                message: "user not exist!"
+            })
+        }
+    })
+    .catch(err => {
+        return response.status(500).json({
+            message:err
+        })
+    })
+})
 
 const randomInteger = (min,max) =>{
     return Math.floor(Math.random() * (max - min + 1)) + min;
