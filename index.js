@@ -8,7 +8,10 @@ app.use(bodyParser.json());
 
 
 const accountsRoute = require('./controllers/accounts');
+const store = require('./controllers/store');
+
 app.use('/api/accounts',accountsRoute);
+app.use('/api/store',store);
 
 const port = 5090;
 
