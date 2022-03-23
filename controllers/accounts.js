@@ -83,14 +83,40 @@ router.post('/verify', async (request, response) => {
     const {email, passcode} = request.body; 
     // is user exist
     User.findOne({email: email}) 
-    // verify code 
-    // update isApproved
-    // response 
-})
+    .then(async account => {
+        if (account){
+            // verify code 
+            if (account.passcode == passcode){
+                    // update isApproved
+                account.isApproved = true;
+                account.save()
+                .then(updated_account => {
+                        // response 
+                    return response.statusCode(200).json({
+                        message:updated_account
+                    })
+                })
+            } else {
+                return response.status(200).json({message: "passcode not correct"})
+            }
+        }
+        else {
+            return response.status(200).json({
+                message: "user not found"
+            })
+        }
+    })
+    .catch(err => {
+        return response.status(500).json({
+            message: err
+        });
+    })
+});
 
 const randomInteger = (min,max) =>{
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
+
 
 // function randomInteger(min, max) {
 //     return Math.floor(Math.random() * (max - min + 1)) + min;
