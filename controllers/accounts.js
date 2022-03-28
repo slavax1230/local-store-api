@@ -3,6 +3,8 @@ const express = require('express');
 const mongoose = require('mongoose');
 const router = express.Router();
 const jwt = require('jsonwebtoken');
+const isAuth = require('./isAuth')
+
 
 //MODELS
 const User = require('../models/user');
@@ -225,6 +227,11 @@ const randomInteger = (min,max) =>{
 //     return Math.floor(Math.random() *  (max - min + 1)) + min;
 //   }
 
+router.get('/getUserData', isAuth, async(request, response) => {
+    return response.status(200).json({
+        message: `hello ${request.account.email}`
+    })
+})
 
 
 router.get('/sayHello',(request, response) => {
