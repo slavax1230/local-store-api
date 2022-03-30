@@ -3,8 +3,8 @@ const express = require('express');
 const mongoose = require('mongoose');
 const router = express.Router();
 const jwt = require('jsonwebtoken');
-const isAuth = require('./isAuth')
-
+const isAuth = require('./isAuth');
+const Store = require('../models/store')
 
 //MODELS
 const User = require('../models/user');
@@ -228,6 +228,8 @@ const randomInteger = (min,max) =>{
 //   }
 
 router.get('/getUserData', isAuth, async(request, response) => {
+    const id = request.account._id;
+    const store = await Store.findOne({associateId: id}).populate('associateId');
     return response.status(200).json({
         message: `hello ${request.account.email}`
     })
