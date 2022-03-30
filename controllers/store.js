@@ -7,6 +7,52 @@ const isAuth = require('../controllers/isAuth')
 const User = require('../models/user')
 
 
+router.put('/updateStore',isAuth, async(request, response) => {
+    const associateId = request.account._id; // ככה מוצאים את המשתמש לפי הטוקן
+    const store = await Store.findOne({associateId:associateId}) // ככה מוצאים את המשתמש לפי הטוקן
+    
+    const {
+        storeName,
+        storeDescription,
+        isTakeaway,
+        isDelivery
+        ,email
+        ,mobile
+        ,phone,
+        city,
+        address,
+        latitude,
+        longtitude,
+        workingHours
+    } = request.body;
+
+    store.storeName = storeName;
+    store.storeDescription = storeDescription;
+    store.isTakeaway = isTakeaway;
+    store.isDelivery = isDelivery;
+    store.contactInfo = {
+        email : email,
+        mobile : mobile,
+        phone : phone,
+        city : city,
+        address : address,
+        latitude : latitude,
+        longitude : longtitude
+    };
+    store.workingHours = workingHours;
+    return store.save()
+    .then(updated_store ={
+
+    })
+    .catch(err => {
+        return response.status(500).json({ 
+            message: err
+        })
+    })
+
+
+})
+
 router.post('/createStore', isAuth, async(request, response) => {
     // get store data
     const associateId = request.account._id;

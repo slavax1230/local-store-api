@@ -231,7 +231,8 @@ router.get('/getUserData', isAuth, async(request, response) => {
     const id = request.account._id;
     const store = await Store.findOne({associateId: id}).populate('associateId');
     return response.status(200).json({
-        message: `hello ${request.account.email}`
+        message: `hello ${request.account.email}`,
+        message: store
     })
 })
 

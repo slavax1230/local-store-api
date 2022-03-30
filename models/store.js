@@ -35,7 +35,7 @@ const StoreSchema = new Schema({
     ],
     workingHours: [
         {
-            day: Number, fromHour:String, toHour:String
+            day: String, fromHour:String, toHour:String
         }
     ],
     createdAt:{type:Date,default:Date.now},
