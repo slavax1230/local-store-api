@@ -70,7 +70,30 @@ router.delete('/deleteCategory/:categoryId', isAuth, async(request,response) => 
 })
 
 router.post('/addProduct', isAuth, async(request,response) => {
+    const associateId = request.account._id; 
+    const store = await Store.findOne({associateId:associateId}) // ככה מוצאים את המשתמש לפי הטוקן
+    
+    const {categoryName,priority} = request.body;
 
+    const _category = new Category({
+        _id : mongoose.Types.ObjectId(),
+        storeId : store._id,
+        categoryName: categoryName,
+        priority: priority
+    });
+    _category.save()
+    .then(created_category => {
+        return response.status(200).json({
+            status:true,
+            message: created_category
+        })
+    })
+    .catch(err => {
+    return response.status(500).json({
+        status:false,
+        message: err
+        });
+    })  
 })
 
 router.put('/updateProduct', isAuth, async(request,response) => {
