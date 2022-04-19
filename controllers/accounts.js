@@ -4,11 +4,12 @@ const mongoose = require('mongoose');
 const router = express.Router();
 const jwt = require('jsonwebtoken');
 const isAuth = require('./isAuth');
-const Store = require('../models/store')
 
 //MODELS
 const User = require('../models/user');
-
+const Store = require('../models/store');
+const Category = require('../models/category');
+const Product = require('../models/product');
 
 //create account
 router.post('/createAccount', async(request, response) => {
@@ -26,22 +27,6 @@ router.post('/createAccount', async(request, response) => {
             const formatted_passwords = await bcryptjs.hash(password, 10);
             //Generate passcode
             const passcode = randomInteger(1000,9999);
-
-            //FORGET PASSWORD
-            router.post('/forgetPassword', async(request,response) => {
-                //get user email
-                const email = request.body.email
-                // is user existing
-                User.findOne({email:email})
-                .then(async account =>{
-                    if(account){
-                        const passcode = randomInteger(1000,9999);
-                        account.passcode = passcode;
-                        account.save();
-                        //.then(account_update =>{})
-                    }
-                })
-            })
 
             //Create user in MongoDB
             const _user = new User({
@@ -68,6 +53,7 @@ router.post('/createAccount', async(request, response) => {
     });
     
 })
+
 
 // Login 
 router.post('/login', async (request, response) => {
@@ -230,16 +216,18 @@ const randomInteger = (min,max) =>{
 router.get('/getUserData', isAuth, async(request, response) => {
     const id = request.account._id;
     const store = await Store.findOne({associateId: id}).populate('associateId');
+    const categories = await Category.find({storeId:store._id});
+    const products = await Product.find({storeId:store._id});
     return response.status(200).json({
         message: `hello ${request.account.email}`,
-        message: store
+        message: store,categories,products
     })
 })
 
 
 router.get('/sayHello',(request, response) => {
     return response.status(200).json({
-        message: 'Hello from kiosk api'
+        message: 'Hello from Store API '
     });
 })
 
